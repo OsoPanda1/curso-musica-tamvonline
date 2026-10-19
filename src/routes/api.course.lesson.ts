@@ -24,8 +24,8 @@ export const Route = createFileRoute("/api/course/lesson")({
         const token = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
         if (!token) return json({ error: "Inicia sesión para acceder a la lección." }, 401);
 
-        const url = process.env.SUPABASE_URL;
-        const key = process.env.SUPABASE_PUBLISHABLE_KEY;
+        const url = process.env["SUPABASE_URL"];
+        const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
         if (!url || !key) return json({ error: "El servicio de cursos no está configurado." }, 503);
 
         try {
