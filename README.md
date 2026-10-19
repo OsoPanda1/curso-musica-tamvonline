@@ -37,16 +37,15 @@ bun run build
 
 Se añadió un workflow de GitHub Actions para ejecutar instalación reproducible, lint, pruebas unitarias y build en pushes y pull requests. El resultado debe verificarse en GitHub; no se afirma que haya pasado hasta observar una ejecución verde.
 
-## Bloqueadores para producción y cobros
+## Cobros: implementación y requisitos restantes
 
-1. **Checkout real:** seleccionar un proveedor, crear órdenes en servidor y validar importe/moneda del lado servidor. Nunca confiar en el precio enviado por el navegador.
-2. **Webhook autenticado:** validar la firma del proveedor, aplicar idempotencia y confirmar el estado directamente con el proveedor. No conceder acceso por una URL de retorno del navegador.
-3. **Autorización de pago:** la migración endurece las tablas y reserva los eventos de pago al rol de servicio, pero aún falta integrar un proveedor, verificar su firma de webhook y conceder/revocar vigencia desde código servidor. Un helper del cliente no es control de acceso.
-4. **Modelo de datos y RLS:** proteger perfiles, suscripciones, progreso y entregas; probar aislamiento entre usuarios.
-5. **Pruebas:** cubrir autenticación, permisos, pago aprobado/rechazado/duplicado, reembolso y vencimiento.
-6. **Operación:** configurar secretos de producción, dominio, monitorización, límites de solicitudes, copias de seguridad, aviso de privacidad y condiciones de venta.
-7. **Derechos:** revisar licencias y condiciones de las herramientas musicales y de IA que se recomiendan en el curso.
-
+1. **Checkout implementado:** el servidor crea la preferencia de Mercado Pago con precio fijo de $500 MXN; el navegador no decide el importe. Requiere `MP_ACCESS_TOKEN` y `APP_BASE_URL`.
+2. **Webhook implementado:** valida HMAC, consulta el pago canónico con Mercado Pago y compara usuario, producto, importe y moneda. Requiere `MP_WEBHOOK_SECRET` y URL pública HTTPS.
+3. **Concesión idempotente:** `apply_verified_payment` registra eventos y otorga tres meses una sola vez por pago; las notificaciones repetidas no duplican el acceso.
+4. **Entrega protegida:** los cuerpos de las lecciones se mantienen en un módulo de servidor y se entregan por un endpoint que verifica la sesión y la vigencia de la inscripción. RLS también limita el progreso de lecciones pagadas.
+5. **Reembolso/contracargo:** la función revierte la vigencia de ese evento si sigue siendo la vigencia activa. Si una compra posterior ya extendió el acceso, requiere conciliación manual para no revocar una compra distinta.
+6. **Pendiente antes de producción:** aplicar y verificar la migración en el proyecto Supabase real, configurar los secretos en el hosting, configurar la URL de notificaciones en Mercado Pago y ejecutar pruebas de integración en sandbox, incluyendo reintentos y reembolsos.
+7. **Operación y cumplimiento:** configurar dominio, monitorización, límites de solicitudes, copias de seguridad, aviso de privacidad, condiciones de venta y revisar las licencias de las herramientas musicales recomendadas.
 ## Despliegue
 
 El proyecto usa TanStack Start y configuración Vite de Lovable con Nitro. El destino final debe elegirse y probarse con el adaptador/runtime compatible. Antes de promover una versión, exigir workflow verde y verificar autenticación, recuperación de contraseña, acceso al curso y errores en un entorno de preview.
