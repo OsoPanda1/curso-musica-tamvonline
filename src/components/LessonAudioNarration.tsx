@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AudioLines, Pause, Play, Square } from "lucide-react";
-import type { Block } from "@/lib/course-content.server";
+type Block =
+  | { type: "p"; text: string }
+  | { type: "h"; text: string }
+  | { type: "list"; items: string[]; ordered?: boolean }
+  | { type: "code"; label?: string; text: string }
+  | { type: "table"; head: string[]; rows: string[][] }
+  | { type: "tip"; text: string }
+  | { type: "practice"; title: string; items: string[] };
 
 function blockToText(block: Block): string[] {
   switch (block.type) {
