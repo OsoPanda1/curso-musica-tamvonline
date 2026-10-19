@@ -29,7 +29,7 @@ export function CheckoutButton({ className = "" }: { className?: string }) {
         throw new Error(payload.error ?? "No fue posible iniciar el pago.");
       }
       const destination = new URL(payload.checkoutUrl);
-      if (destination.protocol !== "https:" || !destination.hostname.endsWith("mercadopago.com") &&
+      if (destination.protocol !== "https:" ||
           !/^([a-z0-9-]+\.)*mercadopago\.(com|com\.mx|com\.ar|cl|com\.br|com\.co|com\.pe|com\.uy)$/i.test(destination.hostname)) {
         throw new Error("La pasarela devolvió un destino no válido.");
       }
