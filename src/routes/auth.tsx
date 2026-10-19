@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>) => ({ mode: s.mode === "signup" ? ("signup" as const) : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ mode: s["mode"] === "signup" ? ("signup" as const) : undefined }),
   head: () => ({
     meta: [
       { title: "Entrar o inscribirme — Sonora IA" },
@@ -38,16 +38,16 @@ function AuthPage() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>; const email = f["email"] ?? ""; const password = f["password"] ?? "";
     setLoading(true);
     try {
       if (forgot) {
-        const { error } = await supabase.auth.resetPasswordForEmail(f.email, { redirectTo: `${window.location.origin}/reset-password` });
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
         if (error) throw error;
         toast.success("Te enviamos un correo para restablecer tu contraseña.");
       } else if (signup) {
         const parsed = signupSchema.safeParse(f);
-        if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
+        if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos"); return; }
         const { error } = await supabase.auth.signUp({
           email: parsed.data.email,
           password: parsed.data.password,
@@ -56,7 +56,7 @@ function AuthPage() {
         if (error) throw error;
         setSent(true);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email: f.email, password: f.password });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         navigate({ to: "/curso" });
       }
