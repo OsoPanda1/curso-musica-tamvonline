@@ -12,7 +12,7 @@ function json(body: unknown, status = 200) {
 }
 
 function configuredBaseUrl() {
-  const value = process.env.APP_BASE_URL?.replace(/\/+$/, "");
+  const value = process.env["APP_BASE_URL"]?.replace(/\/+$/, "");
   if (!value) throw new Error("APP_BASE_URL is not configured");
   const parsed = new URL(value);
   if (parsed.protocol !== "https:" && parsed.hostname !== "localhost") {
@@ -28,9 +28,9 @@ export const Route = createFileRoute("/api/checkout")({
         const token = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
         if (!token) return json({ error: "Inicia sesión para continuar." }, 401);
 
-        const supabaseUrl = process.env.SUPABASE_URL;
-        const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-        const accessToken = process.env.MP_ACCESS_TOKEN;
+        const supabaseUrl = process.env["SUPABASE_URL"];
+        const publishableKey = process.env["SUPABASE_PUBLISHABLE_KEY"];
+        const accessToken = process.env["MP_ACCESS_TOKEN"];
         if (!supabaseUrl || !publishableKey || !accessToken) {
           return json({ error: "El pago todavía no está habilitado en este entorno." }, 503);
         }
