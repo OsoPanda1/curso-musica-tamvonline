@@ -7,6 +7,10 @@ describe("access", () => {
     expect(hasActiveAccess("2026-01-01T00:00:00Z", new Date("2026-05-01"))).toBe(false));
   it("active quarter grants access", () =>
     expect(hasActiveAccess("2026-06-01T00:00:00Z", new Date("2026-05-01"))).toBe(true));
+  it("an invalid expiry never grants access", () =>
+    expect(hasActiveAccess("not-a-date", new Date("2026-05-01"))).toBe(false));
+  it("access expires at the exact paid-until instant", () =>
+    expect(hasActiveAccess("2026-06-01T00:00:00Z", new Date("2026-06-01T00:00:00Z"))).toBe(false));
 });
 
 describe("badges", () => {
