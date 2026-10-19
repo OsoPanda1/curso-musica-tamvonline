@@ -85,7 +85,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      apply_verified_payment: {
+        Args: {
+          p_provider: string
+          p_provider_payment_id: string
+          p_user_id: string
+          p_amount_mxn: number
+          p_currency: string
+          p_status: string
+          p_external_reference: string
+          p_event_hash?: string | null
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
