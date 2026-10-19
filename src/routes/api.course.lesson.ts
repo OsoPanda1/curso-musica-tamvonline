@@ -46,7 +46,8 @@ export const Route = createFileRoute("/api/course/lesson")({
               console.error("[course] Enrollment lookup failed", enrollmentError.code);
               return json({ error: "No se pudo verificar la inscripción." }, 503);
             }
-            if (!enrollment?.paid_until || new Date(enrollment.paid_until).getTime() <= Date.now()) {
+            const paidUntil = enrollment?.paid_until ? Date.parse(enrollment.paid_until) : Number.NaN;
+            if (!Number.isFinite(paidUntil) || paidUntil <= Date.now()) {
               return json({ error: "Esta lección requiere una inscripción activa." }, 403);
             }
           }
