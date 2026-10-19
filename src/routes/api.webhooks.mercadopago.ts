@@ -68,8 +68,8 @@ export const Route = createFileRoute("/api/webhooks/mercadopago")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const accessToken = process.env.MP_ACCESS_TOKEN;
-        const webhookSecret = process.env.MP_WEBHOOK_SECRET;
+        const accessToken = process.env["MP_ACCESS_TOKEN"];
+        const webhookSecret = process.env["MP_WEBHOOK_SECRET"];
         if (!accessToken || !webhookSecret) {
           console.error("[payments] Webhook secrets are not configured");
           return json({ error: "Webhook not configured" }, 503);
