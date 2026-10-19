@@ -40,7 +40,7 @@ Se añadió un workflow de GitHub Actions para ejecutar instalación reproducibl
 ## Cobros: implementación y requisitos restantes
 
 1. **Checkout implementado:** el servidor crea la preferencia de Mercado Pago con precio fijo de $500 MXN; el navegador no decide el importe. Requiere `MP_ACCESS_TOKEN` y `APP_BASE_URL`.
-2. **Webhook implementado:** valida HMAC, consulta el pago canónico con Mercado Pago y compara usuario, producto, importe y moneda. Requiere `MP_WEBHOOK_SECRET` y URL pública HTTPS.
+2. **Webhook implementado:** valida HMAC, consulta el pago canónico con Mercado Pago y compara usuario, producto, importe y moneda. Requiere `MP_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` y URL pública HTTPS.
 3. **Concesión idempotente:** `apply_verified_payment` registra eventos y otorga tres meses una sola vez por pago; las notificaciones repetidas no duplican el acceso.
 4. **Entrega protegida:** los cuerpos de las lecciones se mantienen en un módulo de servidor y se entregan por un endpoint que verifica la sesión y la vigencia de la inscripción. RLS también limita el progreso de lecciones pagadas.
 5. **Reembolso/contracargo:** la función revierte la vigencia de ese evento si sigue siendo la vigencia activa. Si una compra posterior ya extendió el acceso, requiere conciliación manual para no revocar una compra distinta.
