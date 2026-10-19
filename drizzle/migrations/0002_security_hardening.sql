@@ -78,6 +78,7 @@ CREATE INDEX payment_events_user_created_idx
 ALTER TABLE public.payment_events ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.payment_events FROM anon, authenticated;
 GRANT ALL ON public.payment_events TO service_role;
+GRANT USAGE, SELECT ON SEQUENCE public.payment_events_id_seq TO service_role;
 
 -- Enrollment writes remain service-role-only. No client-side INSERT/UPDATE policy is added.
 REVOKE INSERT, UPDATE, DELETE ON public.enrollments FROM anon, authenticated;
