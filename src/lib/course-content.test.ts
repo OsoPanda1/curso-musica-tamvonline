@@ -5,6 +5,7 @@ import { COURSE as SERVER_COURSE, ALL_LESSONS as SERVER_LESSONS } from "./course
 describe("course content boundary", () => {
   it("keeps lesson bodies out of the client catalogue", () => {
     expect(CLIENT_LESSONS.length).toBeGreaterThan(0);
+    expect(CLIENT_COURSE.every((module) => module.lessons.every((lesson) => lesson.blocks.length === 0))).toBe(true);
     expect(CLIENT_LESSONS.every((lesson) => lesson.blocks.length === 0)).toBe(true);
   });
 
