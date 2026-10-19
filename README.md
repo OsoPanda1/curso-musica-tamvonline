@@ -1,24 +1,63 @@
-# Música con IA
+# Sonora IA — Música con inteligencia artificial
 
-quiero que los entusiastas de la musica que desean crear canciones y musica encuentren un sitio que les de un curso completo y practico para que aprendan a crear musica con ai, que les explique de forma educativa practica correcta y super completa como hacer musica, tengo esto para la idea necesito que me apoyes en la construccion del sitio donde todo esto pueda ser posible y super sencillo para cualquier persona, para poder acceder el usuario debera registrarse y realizar un pago de 500 pesos mexicanos
+Plataforma educativa en español para aprender a crear canciones con herramientas de inteligencia artificial. El producto contempla una cuenta personal, un programa de nueve módulos y una inscripción propuesta de **$500 MXN por trimestre**.
 
-This project was built with [Lovable](https://lovable.dev).
+> **Estado honesto:** existe una base de interfaz, contenido educativo y autenticación Supabase. No debe considerarse lista para cobrar ni para producción hasta implementar y verificar el ciclo completo de pagos, la concesión/revocación de acceso desde el servidor, las políticas de base de datos y las pruebas de extremo a extremo. Una pantalla o variable de entorno no constituye integración de pago.
 
-## Build with Lovable
+## Funcionalidad identificada
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/7c3a2093-a72d-4094-ba2e-b38c44da8de7).
+- Landing de presentación y catálogo del curso.
+- Programa de nueve módulos con contenido educativo estructurado.
+- Registro e inicio de sesión por correo/contraseña mediante Supabase.
+- Recuperación de contraseña.
+- Opción de autenticación con Google mediante la integración de Lovable.
+- Cálculo de insignias y helper de dominio para comprobar vigencia de acceso.
+- Stack: React, TypeScript, TanStack Start/Router, Vite, Tailwind CSS y Supabase.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+## Requisitos y ejecución local
 
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Se utiliza Bun y el lockfile `bun.lock`.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+git clone https://github.com/OsoPanda1/m-sica-con-ia.git
+cd m-sica-con-ia
+bun install --frozen-lockfile
+cp .env.example .env
+bun run dev
 ```
+
+Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` con los valores públicos del proyecto Supabase. Configura los proveedores de autenticación y las URL permitidas de redirección. No incluyas claves privadas en variables `VITE_*` ni en Git.
+
+## Validación
+
+```sh
+bun run lint
+bun run build
+```
+
+Se añadió un workflow de GitHub Actions para ejecutar instalación reproducible, lint y build en pushes y pull requests. El resultado debe verificarse en GitHub; no se afirma que haya pasado hasta observar una ejecución verde.
+
+## Bloqueadores para producción y cobros
+
+1. **Checkout real:** seleccionar un proveedor, crear órdenes en servidor y validar importe/moneda del lado servidor. Nunca confiar en el precio enviado por el navegador.
+2. **Webhook autenticado:** validar la firma del proveedor, aplicar idempotencia y confirmar el estado directamente con el proveedor. No conceder acceso por una URL de retorno del navegador.
+3. **Autorización de pago:** persistir vigencia asociada al usuario autenticado y verificarla en el servidor. Un helper del cliente no es control de acceso.
+4. **Modelo de datos y RLS:** proteger perfiles, suscripciones, progreso y entregas; probar aislamiento entre usuarios.
+5. **Pruebas:** cubrir autenticación, permisos, pago aprobado/rechazado/duplicado, reembolso y vencimiento.
+6. **Operación:** configurar secretos de producción, dominio, monitorización, límites de solicitudes, copias de seguridad, aviso de privacidad y condiciones de venta.
+7. **Derechos:** revisar licencias y condiciones de las herramientas musicales y de IA que se recomiendan en el curso.
+
+## Despliegue
+
+El proyecto usa TanStack Start y configuración Vite de Lovable con Nitro. El destino final debe elegirse y probarse con el adaptador/runtime compatible. Antes de promover una versión, exigir workflow verde y verificar autenticación, recuperación de contraseña, acceso al curso y errores en un entorno de preview.
+
+## Seguridad
+
+- No guardar secretos, claves de servicio ni credenciales de pago en el repositorio.
+- Las claves públicas de Supabase pueden aparecer en el cliente; la seguridad depende de Auth, RLS y validación del servidor.
+- No conceder acceso mediante parámetros de URL, estado local ni redirecciones exitosas.
+- No registrar contraseñas, tokens ni datos de pago sensibles.
+
+## Lovable
+
+Editor del proyecto: https://lovable.dev/projects/7c3a2093-a72d-4094-ba2e-b38c44da8de7
