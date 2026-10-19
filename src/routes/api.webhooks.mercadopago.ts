@@ -46,7 +46,7 @@ async function verifySignature(request: Request, dataId: string, secret: string)
   const received = Uint8Array.from(supplied.match(/.{2}/g) ?? [], (byte) => Number.parseInt(byte, 16));
   if (received.length !== expected.length) return false;
   let difference = 0;
-  for (let i = 0; i < expected.length; i += 1) difference |= expected[i] ^ received[i];
+  for (let i = 0; i < expected.length; i += 1) difference |= expected[i]! ^ received[i]!;
   return difference === 0;
 }
 
