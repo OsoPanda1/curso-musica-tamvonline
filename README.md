@@ -7,7 +7,7 @@ Plataforma educativa en español para aprender a crear canciones con herramienta
 ## Funcionalidad identificada
 
 - Landing de presentación y catálogo del curso.
-- Programa de nueve módulos con contenido educativo estructurado.
+- Programa de nueve módulos con catálogo público y contenido de lecciones servido por endpoint autenticado; los cuerpos completos no se incluyen en el catálogo enviado al navegador.
 - Registro e inicio de sesión por correo/contraseña mediante Supabase.
 - Recuperación de contraseña.
 - Opción de autenticación con Google mediante la integración de Lovable.
