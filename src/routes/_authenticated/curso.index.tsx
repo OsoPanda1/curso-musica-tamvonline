@@ -4,6 +4,7 @@ import { COURSE, ALL_LESSONS, FREE_LESSON_ID, hasActiveAccess } from "@/lib/cour
 import { accountQuery } from "@/lib/use-account";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Lock, PlayCircle } from "lucide-react";
+import { CheckoutButton } from "@/components/CheckoutButton";
 
 export const Route = createFileRoute("/_authenticated/curso/")({
   head: () => ({ meta: [{ title: "Mi curso — Sonora IA" }, { name: "description", content: "Tus módulos y avance." }] }),
@@ -25,7 +26,8 @@ function Curso() {
       {!access && (
         <div className="mt-6 rounded-2xl border border-terracotta/50 bg-card p-5">
           <h2 className="font-bold">Inscripción pendiente</h2>
-          <p className="mt-1 text-sm text-muted-foreground">El acceso completo cuesta $500 MXN por trimestre. El pago en línea estará disponible muy pronto. Mientras tanto puedes ver la primera lección gratis.</p>
+          <p className="mt-1 text-sm text-muted-foreground">El acceso completo cuesta $500 MXN por trimestre. El acceso se habilita únicamente después de que el servidor verifique la confirmación oficial de Mercado Pago. Mientras tanto puedes ver la primera lección gratis.</p>
+          <CheckoutButton className="mt-4" />
         </div>
       )}
       <div className="mt-8 space-y-6">

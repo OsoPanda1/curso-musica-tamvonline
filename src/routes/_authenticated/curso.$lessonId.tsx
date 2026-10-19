@@ -2,9 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { findLesson, FREE_LESSON_ID, hasActiveAccess, type Block } from "@/lib/course";
+import { findLesson, FREE_LESSON_ID, hasActiveAccess, type Block, type Lesson } from "@/lib/course";
 import { accountQuery } from "@/lib/use-account";
 import { Button } from "@/components/ui/button";
+import { LessonAudioNarration } from "@/components/LessonAudioNarration";
 
 export const Route = createFileRoute("/_authenticated/curso/$lessonId")({
   head: () => ({ meta: [{ title: "Lección — Sonora IA" }, { name: "description", content: "Lección del curso de música con IA." }] }),
@@ -52,6 +53,26 @@ function LessonPage() {
   if (!lesson) return <main className="p-10">Lección no encontrada.</main>;
   const open = lesson.id === FREE_LESSON_ID || hasActiveAccess(data?.paidUntil);
   const done = data?.completed.has(lesson.id);
+  const lessonContentQuery = useQuery({
+    queryKey: ["lesson-content", lessonId],
+    enabled: Boolean(data?.user) && open,
+    staleTime: 0,
+    gcTime: 0,
+    retry: false,
+    queryFn: async (): Promise<Lesson & { moduleNumber: number }> => {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Tu sesión expiró. Vuelve a iniciar sesión.");
+      const response = await fetch(`/api/course/lesson?lessonId=${encodeURIComponent(lessonId)}`, {
+        headers: { authorization: `Bearer ${token}`, accept: "application/json" },
+        cache: "no-store",
+      });
+      const payload = await response.json() as { lesson?: Lesson & { moduleNumber: number }; error?: string };
+      if (!response.ok || !payload.lesson) throw new Error(payload.error ?? "No se pudo cargar la lección.");
+      return payload.lesson;
+    },
+  });
 
   async function toggle() {
     if (!data) return;
@@ -70,7 +91,14 @@ function LessonPage() {
       <h1 className="mt-2 text-4xl font-bold">{lesson.title}</h1>
       {open ? (
         <>
-          <div className="mt-8 space-y-5">{lesson.blocks.map((b, i) => <BlockView key={i} b={b} />)}</div>
+          {lessonContentQuery.isLoading ? (
+            <p className="mt-8 text-muted-foreground">Cargando contenido…</p>
+          ) : lessonContentQuery.error ? (
+            <p role="alert" className="mt-8 text-muted-foreground">{lessonContentQuery.error instanceof Error ? lessonContentQuery.error.message : "No se pudo cargar la lección."}</p>
+          ) : (
+            <div className="mt-8 space-y-5">{lessonContentQuery.data?.blocks.map((b, i) => <BlockView key={i} b={b} />)}</div>
+          {lessonContentQuery.data?.blocks && <LessonAudioNarration blocks={lessonContentQuery.data.blocks} />}
+          )}
           <Button variant={done ? "glass" : "hero"} className="mt-10" onClick={toggle}>{done ? "Marcar como pendiente" : "Marcar como completada"}</Button>
         </>
       ) : (

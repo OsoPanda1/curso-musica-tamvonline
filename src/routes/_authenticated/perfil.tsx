@@ -29,21 +29,42 @@ function Perfil() {
     e.preventDefault();
     if (!data) return;
     const f = new FormData(e.currentTarget);
+    const username = String(f.get("username") ?? "").trim();
+    const rawAge = String(f.get("age") ?? "").trim();
+    const age = rawAge ? Number(rawAge) : null;
+    const bio = String(f.get("bio") ?? "").trim();
+    if (username && (username.length < 3 || username.length > 30 || !/^[a-zA-Z0-9_.]+$/.test(username))) {
+      toast.error("El nombre de usuario debe tener de 3 a 30 caracteres: letras, números, punto o guion bajo.");
+      return;
+    }
+    if (age !== null && (!Number.isInteger(age) || age < 13 || age > 120)) {
+      toast.error("La edad debe estar entre 13 y 120 años.");
+      return;
+    }
+    if (bio.length > 300) {
+      toast.error("La biografía no puede superar 300 caracteres.");
+      return;
+    }
+
     setSaving(true);
     let avatar_url = data.profile?.avatar_url ?? null;
     const file = f.get("avatar");
     if (file instanceof File && file.size > 0) {
+      if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
+        setSaving(false);
+        toast.error("La foto debe ser una imagen de máximo 5 MB.");
+        return;
+      }
       const path = `${data.user.id}/avatar-${Date.now()}`;
       const up = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
       if (up.error) { setSaving(false); toast.error("No se pudo subir la foto"); return; }
       avatar_url = path;
     }
-    const age = Number(f.get("age")) || null;
     const { error } = await supabase.from("profiles").upsert({
       id: data.user.id,
-      username: String(f.get("username") ?? "").trim().slice(0, 30) || null,
+      username: username || null,
       age,
-      bio: String(f.get("bio") ?? "").slice(0, 300) || null,
+      bio: bio || null,
       avatar_url,
       updated_at: new Date().toISOString(),
     });
@@ -64,7 +85,7 @@ function Perfil() {
         </div>
         <div className="space-y-1.5"><Label htmlFor="avatar">Foto</Label><Input id="avatar" name="avatar" type="file" accept="image/*" /></div>
         <div className="space-y-1.5"><Label htmlFor="username">Nombre de usuario</Label><Input id="username" name="username" defaultValue={data.profile?.username ?? ""} /></div>
-        <div className="space-y-1.5"><Label htmlFor="age">Edad</Label><Input id="age" name="age" type="number" defaultValue={data.profile?.age ?? ""} /></div>
+        <div className="space-y-1.5"><Label htmlFor="age">Edad</Label><Input id="age" name="age" type="number" min={13} max={120} defaultValue={data.profile?.age ?? ""} /></div>
         <div className="space-y-1.5"><Label htmlFor="bio">Biografía (opcional)</Label><Textarea id="bio" name="bio" maxLength={300} defaultValue={data.profile?.bio ?? ""} /></div>
         <Button type="submit" variant="hero" disabled={saving}>{saving ? "Guardando…" : "Guardar"}</Button>
       </form>

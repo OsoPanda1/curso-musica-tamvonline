@@ -1,24 +1,62 @@
-# Música con IA
+# Sonora IA — Música con inteligencia artificial
 
-quiero que los entusiastas de la musica que desean crear canciones y musica encuentren un sitio que les de un curso completo y practico para que aprendan a crear musica con ai, que les explique de forma educativa practica correcta y super completa como hacer musica, tengo esto para la idea necesito que me apoyes en la construccion del sitio donde todo esto pueda ser posible y super sencillo para cualquier persona, para poder acceder el usuario debera registrarse y realizar un pago de 500 pesos mexicanos
+Plataforma educativa en español para aprender a crear canciones con herramientas de inteligencia artificial. El producto contempla una cuenta personal, un programa de nueve módulos y una inscripción propuesta de **$500 MXN por trimestre**.
 
-This project was built with [Lovable](https://lovable.dev).
+> **Estado honesto:** existe una base de interfaz, contenido educativo y autenticación Supabase. La rama ya contiene checkout, webhook, concesión de acceso idempotente y entrega protegida de lecciones, pero no debe considerarse lista para cobrar ni para producción hasta aplicar la migración en Supabase y verificar el flujo con pruebas de extremo a extremo. Una pantalla o variable de entorno no constituye integración de pago.
 
-## Build with Lovable
+## Funcionalidad identificada
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/7c3a2093-a72d-4094-ba2e-b38c44da8de7).
+- Landing de presentación y catálogo del curso.
+- Programa de nueve módulos con catálogo público y contenido de lecciones servido por endpoint autenticado; los cuerpos completos no se incluyen en el catálogo enviado al navegador.
+- Registro e inicio de sesión por correo/contraseña mediante Supabase.
+- Recuperación de contraseña.
+- Opción de autenticación con Google mediante la integración de Lovable.
+- Cálculo de insignias y helper de dominio para comprobar vigencia de acceso.
+- Stack: React, TypeScript, TanStack Start/Router, Vite, Tailwind CSS y Supabase.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+## Requisitos y ejecución local
 
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Se utiliza Bun y el lockfile `bun.lock`.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+git clone https://github.com/OsoPanda1/m-sica-con-ia.git
+cd m-sica-con-ia
+bun install --frozen-lockfile
+cp .env.example .env
+bun run dev
 ```
+
+Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` con los valores públicos del proyecto Supabase. Para el runtime servidor configura `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET` y `APP_BASE_URL` exclusivamente en el gestor de secretos del hosting o en tu `.env` local ignorado por Git. Configura los proveedores de autenticación y las URL permitidas de redirección en Supabase. Nunca incluyas claves privadas en variables `VITE_*` ni en Git.
+
+## Validación
+
+```sh
+bun run lint
+bun run build
+```
+
+Se añadió un workflow de GitHub Actions para ejecutar instalación reproducible, lint, pruebas unitarias y build en pushes y pull requests. El resultado debe verificarse en GitHub; no se afirma que haya pasado hasta observar una ejecución verde.
+
+## Cobros: implementación y requisitos restantes
+
+1. **Checkout implementado:** el servidor crea la preferencia de Mercado Pago con precio fijo de $500 MXN; el navegador no decide el importe. Requiere `MP_ACCESS_TOKEN` y `APP_BASE_URL`.
+2. **Webhook implementado:** valida HMAC, consulta el pago canónico con Mercado Pago y compara usuario, producto, importe y moneda. Requiere `MP_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` y URL pública HTTPS.
+3. **Concesión idempotente:** `apply_verified_payment` registra eventos y otorga tres meses una sola vez por pago; las notificaciones repetidas no duplican el acceso.
+4. **Entrega protegida:** los cuerpos de las lecciones se mantienen en un módulo de servidor y se entregan por un endpoint que verifica la sesión y la vigencia de la inscripción. RLS también limita el progreso de lecciones pagadas.
+5. **Reembolso/contracargo:** la función revierte la vigencia de ese evento si sigue siendo la vigencia activa. Si una compra posterior ya extendió el acceso, requiere conciliación manual para no revocar una compra distinta.
+6. **Pendiente antes de producción:** aplicar y verificar la migración en el proyecto Supabase real, configurar los secretos en el hosting, configurar la URL de notificaciones en Mercado Pago y ejecutar pruebas de integración en sandbox, incluyendo reintentos y reembolsos.
+7. **Operación y cumplimiento:** configurar dominio, monitorización, límites de solicitudes, copias de seguridad, aviso de privacidad, condiciones de venta y revisar las licencias de las herramientas musicales recomendadas.
+## Despliegue
+
+El proyecto usa TanStack Start y configuración Vite de Lovable con Nitro. El destino final debe elegirse y probarse con el adaptador/runtime compatible. Antes de promover una versión, exigir workflow verde y verificar autenticación, recuperación de contraseña, acceso al curso y errores en un entorno de preview.
+
+## Seguridad
+
+- No guardar secretos, claves de servicio ni credenciales de pago en el repositorio.
+- Las claves públicas de Supabase pueden aparecer en el cliente; la seguridad depende de Auth, RLS y validación del servidor.
+- No conceder acceso mediante parámetros de URL, estado local ni redirecciones exitosas.
+- No registrar contraseñas, tokens ni datos de pago sensibles.
+
+## Lovable
+
+Editor del proyecto: https://lovable.dev/projects/7c3a2093-a72d-4094-ba2e-b38c44da8de7
