@@ -7,7 +7,9 @@ Plataforma educativa en español para aprender a crear canciones con herramienta
 ## Funcionalidad identificada
 
 - Landing de presentación y catálogo del curso.
-- Programa de nueve módulos con catálogo público y contenido de lecciones servido por endpoint autenticado; los cuerpos completos no se incluyen en el catálogo enviado al navegador.
+- Programa de nueve módulos y 22 lecciones, con ejemplos desarrollados y ejercicios prácticos añadidos a cada tema mediante una capa de contenido servida desde el servidor.
+- Narración de cada lección mediante controles de voz del navegador; esta función reproduce el texto autorizado y no equivale a un MP3 grabado ni descargable.
+- Catálogo de 22 audios planeados y tres guiones iniciales de locución documentados en `docs/audio-production-plan.md`.
 - Registro e inicio de sesión por correo/contraseña mediante Supabase.
 - Recuperación de contraseña.
 - Opción de autenticación con Google mediante la integración de Lovable.
@@ -46,6 +48,10 @@ Se añadió un workflow de GitHub Actions para ejecutar instalación reproducibl
 5. **Reembolso/contracargo:** la función revierte la vigencia de ese evento si sigue siendo la vigencia activa. Si una compra posterior ya extendió el acceso, requiere conciliación manual para no revocar una compra distinta.
 6. **Pendiente antes de producción:** aplicar y verificar la migración en el proyecto Supabase real, configurar los secretos en el hosting, configurar la URL de notificaciones en Mercado Pago y ejecutar pruebas de integración en sandbox, incluyendo reintentos y reembolsos.
 7. **Operación y cumplimiento:** configurar dominio, monitorización, límites de solicitudes, copias de seguridad, aviso de privacidad, condiciones de venta y revisar las licencias de las herramientas musicales recomendadas.
+## Contenido educativo y audio
+
+Cada lección recibe ejemplos trabajados, ejercicios de aplicación y criterios para revisar el resultado. La narración se genera en el navegador con la voz disponible en el dispositivo; la calidad y las voces varían por sistema. La primera tanda de tres MP3 sintéticos sirve como prototipo de locución y se entrega por separado; todavía no está incluida en `public/audio/`. El plan de producción enumera los 22 archivos previstos, sus nombres y los guiones iniciales.
+
 ## Despliegue
 
 El proyecto usa TanStack Start y configuración Vite de Lovable con Nitro. El destino final debe elegirse y probarse con el adaptador/runtime compatible. Antes de promover una versión, exigir workflow verde y verificar autenticación, recuperación de contraseña, acceso al curso y errores en un entorno de preview.
