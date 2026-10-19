@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 type MercadoPagoPayment = {
@@ -22,7 +21,7 @@ function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
-function verifySignature(request: Request, dataId: string, secret: string): boolean {
+async function verifySignature(request: Request, dataId: string, secret: string): Promise<boolean> {
   const signature = request.headers.get("x-signature");
   const requestId = request.headers.get("x-request-id");
   if (!signature || !requestId) return false;
@@ -36,9 +35,19 @@ function verifySignature(request: Request, dataId: string, secret: string): bool
   if (!timestamp || !supplied || !/^[a-f0-9]{64}$/i.test(supplied)) return false;
 
   const manifest = `id:${dataId.toLowerCase()};request-id:${requestId};ts:${timestamp};`;
-  const expected = createHmac("sha256", secret).update(manifest).digest();
-  const received = Buffer.from(supplied, "hex");
-  return received.length === expected.length && timingSafeEqual(received, expected);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const expected = new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(manifest)));
+  const received = Uint8Array.from(supplied.match(/.{2}/g) ?? [], (byte) => Number.parseInt(byte, 16));
+  if (received.length !== expected.length) return false;
+  let difference = 0;
+  for (let i = 0; i < expected.length; i += 1) difference |= expected[i] ^ received[i];
+  return difference === 0;
 }
 
 function mapStatus(status: string): "pending" | "approved" | "rejected" | "cancelled" | "refunded" | "charged_back" | null {
@@ -78,7 +87,7 @@ export const Route = createFileRoute("/api/webhooks/mercadopago")({
         const topic = body.type ?? url.searchParams.get("type") ?? "";
         if (!dataId || !/^[0-9]+$/.test(dataId)) return json({ received: true });
         if (topic && topic !== "payment" && !body.action?.startsWith("payment.")) return json({ received: true });
-        if (!verifySignature(request, dataId, webhookSecret)) {
+        if (!(await verifySignature(request, dataId, webhookSecret))) {
           return json({ error: "Invalid signature" }, 401);
         }
 
@@ -103,9 +112,9 @@ export const Route = createFileRoute("/api/webhooks/mercadopago")({
             return json({ error: "Payment validation failed" }, 422);
           }
 
-          const eventHash = createHash("sha256")
-            .update(`${payment.id}|${userId}|${payment.status}|${payment.transaction_amount}|${payment.currency_id}`)
-            .digest("hex");
+          const canonicalEvent = `${payment.id}|${userId}|${payment.status}|${payment.transaction_amount}|${payment.currency_id}`;
+          const eventHashBytes = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canonicalEvent)));
+          const eventHash = Array.from(eventHashBytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
           const { error } = await supabaseAdmin.rpc("apply_verified_payment", {
             p_provider: "mercadopago",
             p_provider_payment_id: String(payment.id),
