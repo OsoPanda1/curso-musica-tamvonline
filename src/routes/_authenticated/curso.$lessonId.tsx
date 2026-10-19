@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { findLesson, FREE_LESSON_ID, hasActiveAccess, type Block, type Lesson } from "@/lib/course";
 import { accountQuery } from "@/lib/use-account";
 import { Button } from "@/components/ui/button";
+import { LessonAudioNarration } from "@/components/LessonAudioNarration";
 
 export const Route = createFileRoute("/_authenticated/curso/$lessonId")({
   head: () => ({ meta: [{ title: "Lección — Sonora IA" }, { name: "description", content: "Lección del curso de música con IA." }] }),
@@ -96,6 +97,7 @@ function LessonPage() {
             <p role="alert" className="mt-8 text-muted-foreground">{lessonContentQuery.error instanceof Error ? lessonContentQuery.error.message : "No se pudo cargar la lección."}</p>
           ) : (
             <div className="mt-8 space-y-5">{lessonContentQuery.data?.blocks.map((b, i) => <BlockView key={i} b={b} />)}</div>
+          {lessonContentQuery.data?.blocks && <LessonAudioNarration blocks={lessonContentQuery.data.blocks} />}
           )}
           <Button variant={done ? "glass" : "hero"} className="mt-10" onClick={toggle}>{done ? "Marcar como pendiente" : "Marcar como completada"}</Button>
         </>
