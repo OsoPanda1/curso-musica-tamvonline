@@ -172,8 +172,16 @@ BEGIN
     RAISE EXCEPTION 'Payment identifier collision';
   END IF;
 
-  -- Do not let delayed/replayed notifications reverse a refund or regress an approved payment.
-  IF v_event.status IN ('refunded','charged_back') AND p_status = 'approved' THEN
+  -- Refunds/chargebacks are terminal for this event: stale notifications cannot
+  -- resurrect an entitlement or rewrite the terminal state.
+  IF v_event.status IN ('refunded','charged_back') THEN
+    IF v_event.status = 'refunded' AND p_status = 'charged_back' THEN
+      UPDATE public.payment_events
+      SET status = 'charged_back',
+          event_hash = COALESCE(p_event_hash, event_hash),
+          updated_at = now()
+      WHERE id = v_event.id;
+    END IF;
     RETURN false;
   END IF;
   IF v_event.access_granted_at IS NOT NULL AND p_status IN ('pending','rejected','cancelled') THEN
