@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { findLesson, FREE_LESSON_ID } from "@/lib/course-content.server";
+import { enrichLesson } from "@/lib/course-enrichment.server";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -52,7 +53,7 @@ export const Route = createFileRoute("/api/course/lesson")({
             }
           }
 
-          return json({ lesson });
+          return json({ lesson: enrichLesson(lesson) });
         } catch (error) {
           console.error("[course] Lesson delivery failed", error instanceof Error ? error.message : "unknown error");
           return json({ error: "No se pudo cargar la lección." }, 500);
