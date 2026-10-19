@@ -97,6 +97,14 @@ CREATE POLICY "own progress insert with enrollment" ON public.lesson_progress
     )
   );
 
+-- Constrain avatar storage if the bucket already exists. A missing bucket is left untouched
+-- so deployments can create it explicitly before enabling profile uploads.
+UPDATE storage.buckets
+SET public = false,
+    file_size_limit = 5242880,
+    allowed_mime_types = ARRAY['image/jpeg','image/png','image/webp','image/gif']
+WHERE id = 'avatars';
+
 -- Enrollment writes remain service-role-only. No client-side INSERT/UPDATE policy is added.
 REVOKE INSERT, UPDATE, DELETE ON public.enrollments FROM anon, authenticated;
 REVOKE ALL ON public.payment_events_id_seq FROM anon, authenticated;
