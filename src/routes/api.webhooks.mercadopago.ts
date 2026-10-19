@@ -26,10 +26,12 @@ async function verifySignature(request: Request, dataId: string, secret: string)
   const requestId = request.headers.get("x-request-id");
   if (!signature || !requestId) return false;
 
-  const parts = Object.fromEntries(signature.split(",").map((part) => {
+  const parts: Record<string, string> = {};
+  for (const part of signature.split(",")) {
     const index = part.indexOf("=");
-    return index < 0 ? [part.trim(), ""] : [part.slice(0, index).trim(), part.slice(index + 1).trim()];
-  }));
+    if (index < 0) continue;
+    parts[part.slice(0, index).trim()] = part.slice(index + 1).trim();
+  }
   const timestamp = parts["ts"];
   const supplied = parts["v1"];
   if (!timestamp || !supplied || !/^[a-f0-9]{64}$/i.test(supplied)) return false;
