@@ -82,6 +82,21 @@ ALTER TABLE public.payment_events ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.payment_events FROM anon, authenticated;
 GRANT ALL ON public.payment_events TO service_role;
 
+-- Progress may be written only for the free lesson or by an account with active paid access.
+DROP POLICY IF EXISTS "own progress insert" ON public.lesson_progress;
+CREATE POLICY "own progress insert with enrollment" ON public.lesson_progress
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    auth.uid() = user_id
+    AND (
+      lesson_id = 'm1-l1'
+      OR EXISTS (
+        SELECT 1 FROM public.enrollments e
+        WHERE e.user_id = auth.uid() AND e.paid_until > now()
+      )
+    )
+  );
+
 -- Enrollment writes remain service-role-only. No client-side INSERT/UPDATE policy is added.
 REVOKE INSERT, UPDATE, DELETE ON public.enrollments FROM anon, authenticated;
 REVOKE ALL ON public.payment_events_id_seq FROM anon, authenticated;
