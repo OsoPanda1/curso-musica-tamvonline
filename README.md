@@ -2,7 +2,7 @@
 
 Plataforma educativa en español para aprender a crear canciones con herramientas de inteligencia artificial. El producto contempla una cuenta personal, un programa de nueve módulos y una inscripción propuesta de **$500 MXN por trimestre**.
 
-> **Estado honesto:** existe una base de interfaz, contenido educativo y autenticación Supabase. No debe considerarse lista para cobrar ni para producción hasta implementar y verificar el ciclo completo de pagos, la concesión/revocación de acceso desde el servidor y las pruebas de extremo a extremo. La migración de endurecimiento de datos está en la rama de trabajo y todavía debe aplicarse y verificarse en el proyecto Supabase real. Una pantalla o variable de entorno no constituye integración de pago.
+> **Estado honesto:** existe una base de interfaz, contenido educativo y autenticación Supabase. La rama ya contiene checkout, webhook, concesión de acceso idempotente y entrega protegida de lecciones, pero no debe considerarse lista para cobrar ni para producción hasta aplicar la migración en Supabase y verificar el flujo con pruebas de extremo a extremo. Una pantalla o variable de entorno no constituye integración de pago.
 
 ## Funcionalidad identificada
 
@@ -26,7 +26,7 @@ cp .env.example .env
 bun run dev
 ```
 
-Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` con los valores públicos del proyecto Supabase. Configura los proveedores de autenticación y las URL permitidas de redirección. No incluyas claves privadas en variables `VITE_*` ni en Git.
+Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` con los valores públicos del proyecto Supabase. Para el runtime servidor configura `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET` y `APP_BASE_URL` exclusivamente en el gestor de secretos del hosting o en tu `.env` local ignorado por Git. Configura los proveedores de autenticación y las URL permitidas de redirección en Supabase. Nunca incluyas claves privadas en variables `VITE_*` ni en Git.
 
 ## Validación
 
