@@ -66,3 +66,17 @@ El proyecto usa TanStack Start y configuración Vite de Lovable con Nitro. El de
 ## Lovable
 
 Editor del proyecto: https://lovable.dev/projects/7c3a2093-a72d-4094-ba2e-b38c44da8de7
+
+## Interfaz Play & Go y despliegue Vercel
+
+La portada se ha renovado para integrar la propuesta visual Play & Go con la arquitectura real de Sonora IA: identidad TAMV, búsqueda funcional de módulos/lecciones, tarjetas alimentadas por el catálogo del curso, rutas de lección existentes, recursos de software abierto y referencias institucionales. La interfaz refleja el catálogo real del proyecto (`COURSE` y `ALL_LESSONS`) en vez de inventar módulos adicionales. Los identificadores DOI que aparecen en la portada se muestran como referencias aportadas y deben validarse en sus registros de origen antes de utilizarlos como evidencia.
+
+- Configuración inicial de despliegue: [docs/vercel-deployment.md](docs/vercel-deployment.md).
+- Configuración de build: `vercel.json`, con `NITRO_PRESET=vercel`.
+- El proyecto requiere runtime de servidor; no configurarlo como exportación estática.
+- Los recursos enlazados a software abierto son enlaces a sus proyectos originales. Verifica la licencia y las condiciones de cada versión/modelo antes de incorporarlos a un flujo de producción.
+
+### Puerta de salida a producción
+
+La UI y la configuración del proveedor no bastan para declarar producción. Antes de habilitar cobros reales, deben pasar CI/build y las pruebas end-to-end de Supabase, control de acceso a lecciones, checkout, webhooks idempotentes, reembolsos y redirecciones del dominio. No se deben publicar secretos ni considerar variables de entorno como prueba de una integración operativa.
+
