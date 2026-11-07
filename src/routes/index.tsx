@@ -129,7 +129,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-card/30">
+      <section id="herramientas" className="scroll-mt-24 border-y border-border bg-card/30">
         <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-20">
           <div className="max-w-3xl"><p className="text-xs font-bold uppercase tracking-[.2em] text-terracotta">Soberanía creativa</p><h2 className="mt-3 text-3xl font-bold md:text-4xl">Herramientas abiertas. Más control sobre tu proceso.</h2><p className="mt-4 text-sm leading-7 text-muted-foreground">El curso puede complementarse con herramientas de código abierto. Comprueba siempre la licencia, los requisitos del equipo, las condiciones de los modelos y los derechos de los datos que utilices.</p></div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
