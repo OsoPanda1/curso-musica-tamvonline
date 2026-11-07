@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { COURSE, ALL_LESSONS } from "@/lib/course";
 import hero from "@/assets/hero.jpg";
 import {
-  ArrowDownRight, ArrowRight, AudioLines, BookOpen, Check, CirclePlay,
+  ArrowDownRight, ArrowRight, AudioLines, BookOpen, CirclePlay,
   Cpu, ExternalLink, FlaskConical, Github, Headphones, LockKeyhole,
-  Music2, Search, ShieldCheck, Sparkles, WandSparkles, X,
+  Music2, Search, ShieldCheck, WandSparkles, X,
 } from "lucide-react";
 
 const openTools = [
