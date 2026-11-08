@@ -14,6 +14,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from music_utils import parse_chord, parse_note
 from generate_midi import create_midi
 from metadata import create_metadata
+from evaluate_audio import evaluate_audio
+from generate_stable_audio import generate_audio
 
 
 class MusicUtilityTests(unittest.TestCase):
@@ -48,6 +50,35 @@ class MusicUtilityTests(unittest.TestCase):
             # MIDI time is quantized to ticks on export; allow one small tick-scale tolerance.
             self.assertTrue(all(note.start >= intro_end - 0.001 for note in drum_tracks[0].notes))
             self.assertTrue(any(instrument.notes for instrument in midi.instruments if not instrument.is_drum))
+
+
+    def test_audio_qc_measures_synthetic_stereo_without_claiming_artifact_detection(self):
+        import numpy as np
+        import soundfile as sf
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            audio_path = root / "synthetic.wav"
+            sample_rate = 44_100
+            time = np.arange(sample_rate, dtype=np.float32) / sample_rate
+            mono = 0.2 * np.sin(2 * np.pi * 440 * time)
+            stereo = np.column_stack((mono, mono))
+            sf.write(audio_path, stereo, sample_rate)
+
+            report = evaluate_audio(audio_path)
+            self.assertEqual(report["channels"], 2)
+            self.assertEqual(report["sample_rate_hz"], sample_rate)
+            self.assertFalse(report["clipping_detected"])
+            self.assertAlmostEqual(report["stereo_correlation"], 1.0, places=3)
+            self.assertEqual(report["audible_artifacts"], "not assessed automatically; requires critical listening")
+
+    def test_stable_audio_rejects_invalid_inputs_before_loading_model(self):
+        with self.assertRaises(ValueError):
+            generate_audio("", "", "unused.wav")
+        with self.assertRaises(ValueError):
+            generate_audio("valid prompt", "", "unused.wav", duration_seconds=48.0)
+        with self.assertRaises(ValueError):
+            generate_audio("valid prompt", "", "unused.wav", guidance_scale=-1.0)
 
     def test_metadata_hash_matches_audio_bytes(self):
         with tempfile.TemporaryDirectory() as directory:
