@@ -45,7 +45,8 @@ class MusicUtilityTests(unittest.TestCase):
             self.assertEqual(len(drum_tracks), 1)
             self.assertTrue(drum_tracks[0].notes)
             intro_end = 4 * (60 / 92) * 4
-            self.assertTrue(all(note.start >= intro_end for note in drum_tracks[0].notes))
+            # MIDI time is quantized to ticks on export; allow one small tick-scale tolerance.
+            self.assertTrue(all(note.start >= intro_end - 0.001 for note in drum_tracks[0].notes))
             self.assertTrue(any(instrument.notes for instrument in midi.instruments if not instrument.is_drum))
 
     def test_metadata_hash_matches_audio_bytes(self):
