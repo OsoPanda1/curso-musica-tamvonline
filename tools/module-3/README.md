@@ -46,6 +46,6 @@ El generador MIDI produce seis pistas editables: piano, bajo, pad, arpegio, melo
 
 - data/prompts.example.csv: cinco experimentos controlados; las decisiones quedan como por evaluar.
 - templates/: ficha creativa e informe del proyecto.
-- tests/: pruebas de parser, MIDI y hash.
+- tests/: pruebas de parser, MIDI, hash, métricas de audio sintético y validación previa de parámetros generativos.
 
 La generación Stable Audio requiere acceso aceptado al modelo y hardware adecuado. Las pruebas no descargan el checkpoint ni requieren GPU.
