@@ -14,7 +14,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ~~~~
 
-Para ejecutar solo pruebas y generación MIDI, sin descargar PyTorch/Diffusers:
+Para ejecutar las pruebas de MIDI, metadatos y control de calidad, sin descargar los pesos del modelo ni instalar PyTorch/Diffusers:
 
 ~~~~bash
 pip install -r requirements-test.txt
