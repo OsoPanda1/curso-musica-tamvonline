@@ -68,27 +68,12 @@ export const COURSE: Module[] = [
   {
     id: "m3",
     number: 3,
-    title: "Composición lírica profesional",
-    goal: "Escribir letras que la IA pueda cantar con claridad, emoción y ritmo.",
+    title: "IA generativa musical y composición controlada",
+    goal: "Diseñar una obra musical dirigida por el estudiante: intención, MIDI, armonía, generación reproducible, producción crítica y trazabilidad.",
     lessons: [
-      {
-        id: "m3-l1",
-        title: "Fórmula de letra en 5 pasos",
-        minutes: 8,
-        blocks: [],
-      },
-      {
-        id: "m3-l2",
-        title: "Sílabas, rima y cadencia",
-        minutes: 6,
-        blocks: [],
-      },
-      {
-        id: "m3-l3",
-        title: "Plantilla de letra etiquetada",
-        minutes: 8,
-        blocks: [],
-      },
+      { id: "m3-l1", title: "Intención artística y ficha de dirección musical", minutes: 12, blocks: [] },
+      { id: "m3-l2", title: "MIDI editable y coherencia armónica", minutes: 12, blocks: [] },
+      { id: "m3-l3", title: "Generación controlada, escucha crítica y trazabilidad", minutes: 18, blocks: [] },
     ],
   },
   {
@@ -229,7 +214,7 @@ export function computeBadges(completed: Set<string>): Badge[] {
   const modulesDone = COURSE.filter((m) => moduleDone(m.id)).length;
   return [
     { id: "first", name: "Primer acorde", description: "Completa tu primera lección", earned: completed.size >= 1 },
-    { id: "lyric", name: "Letrista", description: "Termina el módulo de composición lírica", earned: moduleDone("m3") },
+    { id: "director", name: "Director generativo", description: "Termina el módulo de IA generativa y composición controlada", earned: moduleDone("m3") },
     { id: "prompt", name: "Maestro del prompt", description: "Termina el módulo de prompts musicales", earned: moduleDone("m4") },
     { id: "half", name: "Mitad del camino", description: "Completa 5 módulos", earned: modulesDone >= 5 },
     { id: "mix", name: "Ingeniero de mezcla", description: "Termina postproducción", earned: moduleDone("m7") },

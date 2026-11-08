@@ -7,7 +7,8 @@ Plataforma educativa en español para aprender a crear canciones con herramienta
 ## Funcionalidad identificada
 
 - Landing de presentación y catálogo del curso.
-- Programa de nueve módulos y 22 lecciones, con ejemplos desarrollados y ejercicios prácticos añadidos a cada tema mediante una capa de contenido servida desde el servidor.
+- Programa de nueve módulos y 22 lecciones. El Módulo 3 incorpora un proyecto de obra musical controlada por IA, rúbrica ponderada, MIDI editable, análisis armónico, cinco variaciones controladas y trazabilidad.
+- Kit Python del Módulo 3 en tools/module-3/: generación MIDI, análisis music21, inferencia Stable Audio, control técnico de audio y metadatos SHA-256.
 - Narración de cada lección mediante controles de voz del navegador; esta función reproduce el texto autorizado y no equivale a un MP3 grabado ni descargable.
 - Catálogo de 22 audios planeados y tres guiones iniciales de locución documentados en `docs/audio-production-plan.md`.
 - Registro e inicio de sesión por correo/contraseña mediante Supabase.
@@ -21,8 +22,8 @@ Plataforma educativa en español para aprender a crear canciones con herramienta
 Se utiliza Bun y el lockfile `bun.lock`.
 
 ```sh
-git clone https://github.com/OsoPanda1/m-sica-con-ia.git
-cd m-sica-con-ia
+git clone https://github.com/OsoPanda1/curso-musica-tamvonline.git
+cd curso-musica-tamvonline
 bun install --frozen-lockfile
 cp .env.example .env
 bun run dev
@@ -48,6 +49,12 @@ Se añadió un workflow de GitHub Actions para ejecutar instalación reproducibl
 5. **Reembolso/contracargo:** la función revierte la vigencia de ese evento si sigue siendo la vigencia activa. Si una compra posterior ya extendió el acceso, requiere conciliación manual para no revocar una compra distinta.
 6. **Pendiente antes de producción:** aplicar y verificar la migración en el proyecto Supabase real, configurar los secretos en el hosting, configurar la URL de notificaciones en Mercado Pago y ejecutar pruebas de integración en sandbox, incluyendo reintentos y reembolsos.
 7. **Operación y cumplimiento:** configurar dominio, monitorización, límites de solicitudes, copias de seguridad, aviso de privacidad, condiciones de venta y revisar las licencias de las herramientas musicales recomendadas.
+## Módulo 3 — proyecto final y kit reproducible
+
+El proyecto se evalúa como obra musical dirigida por el estudiante, no como una carpeta de renders. La rúbrica, paquete obligatorio, defensa oral y lista de escucha están en docs/module-3/final-project.md. El código de apoyo está en tools/module-3/README.md. Las pruebas del kit no descargan modelos ni requieren GPU.
+
+La revisión del 7 de noviembre de 2026 encontró tres migraciones SQL versionadas en el journal del repositorio. No se confirmó el historial remoto de Supabase. Vercel no presenta un proyecto vinculado al curso en el equipo consultado; no se afirma que el curso esté desplegado allí. Consulta docs/operations/supabase-vercel-audit-2026-11-07.md antes de aplicar migraciones.
+
 ## Contenido educativo y audio
 
 Cada lección recibe ejemplos trabajados, ejercicios de aplicación y criterios para revisar el resultado. La narración se genera en el navegador con la voz disponible en el dispositivo; la calidad y las voces varían por sistema. La primera tanda de tres MP3 sintéticos sirve como prototipo de locución y se entrega por separado; todavía no está incluida en `public/audio/`. El plan de producción enumera los 22 archivos previstos, sus nombres y los guiones iniciales.

@@ -20,6 +20,15 @@ describe("course lesson teaching content", () => {
     }
   });
 
+  it("teaches the controlled musical work and evidence rubric in Module 3", () => {
+    const finalLesson = enrichLesson(findLesson("m3-l3")!);
+    const copy = finalLesson.blocks.map((block) => block.type === "p" || block.type === "h" || block.type === "tip" ? block.text : block.type === "table" ? block.rows.flat().join(" ") : block.type === "list" ? block.items.join(" ") : block.type === "code" ? block.text : block.items.join(" ")).join("\n");
+    expect(copy).toContain("Control generativo");
+    expect(copy).toContain("Reproducibilidad");
+    expect(copy).toContain("version_A.wav");
+    expect(copy).toContain("defensa oral");
+  });
+
   it("does not change lesson identity when enrichment is applied", () => {
     for (const lesson of ALL_LESSONS) {
       expect(enrichLesson(lesson).id).toBe(lesson.id);

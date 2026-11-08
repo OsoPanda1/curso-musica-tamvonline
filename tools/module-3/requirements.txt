@@ -1,0 +1,14 @@
+# MIDI, harmony and analysis
+numpy>=1.26,<3
+pretty-midi==0.2.11
+music21>=9.7,<12
+librosa==0.11.0
+soundfile>=0.12,<1
+scipy>=1.11,<2
+pyloudnorm>=0.1.1,<0.2
+
+# Stable Audio Open inference (install a PyTorch build matching the machine)
+torch>=2.4,<3
+diffusers>=0.35,<1
+transformers>=4.44,<6
+accelerate>=0.34,<2

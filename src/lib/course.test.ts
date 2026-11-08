@@ -14,6 +14,12 @@ describe("access", () => {
 });
 
 describe("badges", () => {
+  it("awards the Module 3 generative director badge after its lessons", () => {
+    const moduleThree = new Set(ALL_LESSONS.filter((lesson) => lesson.moduleId === "m3").map((lesson) => lesson.id));
+    const badge = computeBadges(moduleThree).find((item) => item.id === "director");
+    expect(badge?.earned).toBe(true);
+  });
+
   it("completing everything earns Productor IA", () => {
     const b = computeBadges(new Set(ALL_LESSONS.map((l) => l.id)));
     expect(b.find((x) => x.id === "pro")!.earned).toBe(true);
